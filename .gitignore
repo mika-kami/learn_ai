@@ -1,0 +1,16 @@
+# Virtual Environment (Matches your folder)
+venv/
+env/
+.env
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code settings
+.vscode/ [4] [5]
+
+# OS specific
+.DS_Store
+Thumbs.db
