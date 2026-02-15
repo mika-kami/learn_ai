@@ -9,7 +9,7 @@ __pycache__/
 *$py.class
 
 # VS Code settings
-.vscode/ [4] [5]
+.vscode/
 
 # OS specific
 .DS_Store
