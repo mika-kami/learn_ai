@@ -1,0 +1,12 @@
+16.02.2026
+
+Added metrics and evaluation model. 
+
+Metrics:
+- length_score (tokens): Evaluates the length of the response, giving a score based on how well it meets expected length criteria.
+- latency_score (secs): Evaluates the response latency, giving a score based on how quickly the response was generated.
+- final_score (0 to 1): A composite score that combines keyword_score, length_score, and latency_score to provide an overall evaluation of the response quality.
+
+Evaluation model:
+- generate_report: A method that takes a prompt and response, calculates the various scores, and generates a report containing all the evaluation metrics.
+- was_passed (bool): A boolean field indicating whether the response passed the evaluation based on the final_score meeting or exceeding a defined threshold (e.g., 0.8).

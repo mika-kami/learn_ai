@@ -14,3 +14,11 @@ __pycache__/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Reports and results
+reports/
+results/    

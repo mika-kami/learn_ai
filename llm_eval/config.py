@@ -1,0 +1,26 @@
+from dotenv import load_dotenv
+from datetime import datetime
+import os
+
+load_dotenv()
+timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
+
+API_KEY = os.getenv("OPENAI_API_KEY")
+MODEL_NAME = os.getenv("MODEL_NAME")
+TEMPERATURE = float(os.getenv("TEMPERATURE"))
+MAX_TOKENS = int(os.getenv("MAX_TOKENS"))
+
+# Naming
+REPORTS_DIR = "./reports"
+REPORTS_NAME = f"reports_{timestamp}.json"
+RESULTS_DIR = "./results"
+RESULTS_NAME = f"results_{timestamp}.json"
+
+# Keywords you want to evaluate against
+EVAL_KEYWORDS = ["nothing", "nothingness", "void", "emptiness", "null"]
+
+# Latency threshold in seconds (for scoring)   
+LATENCY_THRESHOLD = 5.0
+
+# Pass threshold for final score (0 to 1)
+PASS_THRESHOLD = 0.8

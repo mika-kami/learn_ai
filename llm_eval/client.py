@@ -4,8 +4,7 @@ from timeit import main
 from dotenv import load_dotenv
 from openai import OpenAI
 
-import config
-import models
+from . import config
 
 
 class LLMClient():
