@@ -1,25 +1,32 @@
 from dotenv import load_dotenv
-from datetime import datetime
 import os
 
 load_dotenv()
-timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
+
+# =========================
+# API / MODEL
+# =========================
 
 API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL_NAME="gpt-4o-mini"
-TEMPERATURE="0.3"
-MAX_TOKENS="300"
 
-# Naming
-REPORTS_DIR = "./reports"
-REPORTS_NAME = f"reports_{timestamp}.json"
-RESULTS_DIR = "./results"
-RESULTS_NAME = f"results_{timestamp}.json"
+MODEL_NAME = "gpt-4o-mini"
+TEMPERATURE = 0.3
+MAX_TOKENS = 300
+
+# =========================
+# EVALUATION SETTINGS
+# =========================
 
 # Keywords you want to evaluate against
-EVAL_KEYWORDS = ["nothing", "nothingness", "void", "emptiness", "null"]
+EVAL_KEYWORDS = [
+    "embeddings",
+    "vectors",
+    "generation",
+    "language",
+    "processing",
+]
 
-# Latency threshold in seconds (for scoring)   
+# Latency threshold in seconds (for scoring)
 LATENCY_THRESHOLD = 5.0
 
 # Pass threshold for final score (0 to 1)
