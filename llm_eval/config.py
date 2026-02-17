@@ -6,9 +6,11 @@ load_dotenv()
 timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
 
 API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL_NAME="gpt-4o-mini"
-TEMPERATURE="0.3"
-MAX_TOKENS="300"
+
+# Model configuration
+MODEL_NAME = "gpt-4o-mini"
+TEMPERATURE = "0.3"
+MAX_TOKENS = "300"
 
 # Naming
 REPORTS_DIR = "./reports"

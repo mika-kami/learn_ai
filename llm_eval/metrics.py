@@ -11,7 +11,9 @@ def count_length_score(tokens: int, max_len: int = config.MAX_TOKENS) -> float:
     return min(score, 1.0)
 
 
-def count_latency_score(latency: float, max_latency: float = config.LATENCY_THRESHOLD) -> float:
+def count_latency_score(
+    latency: float, max_latency: float = config.LATENCY_THRESHOLD
+) -> float:
     """
     Returns a normalized latency score between 0 and 1.
     """

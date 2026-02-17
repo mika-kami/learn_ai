@@ -1,14 +1,14 @@
 import json
 from datetime import datetime
+
 from rich import print
 from rich.console import Console
 from rich.table import Table
 
-from .config import REPORTS_NAME, RESULTS_DIR, RESULTS_NAME
 from .client import LLMClient
+from .config import REPORTS_NAME, RESULTS_DIR, RESULTS_NAME
 from .evaluator import Evaluator
 from .models import LLMResult
-
 
 timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
 
@@ -31,7 +31,7 @@ def run_evaluation():
 
     for idx, prompt in enumerate(prompts, start=1):
         print(f"\n[bold yellow]Running {idx}/{len(prompts)}:[/bold yellow] {prompt}")
-        
+
         try:
             raw = client.send_prompt(prompt)
             result = LLMResult(**raw)
@@ -52,7 +52,8 @@ def run_evaluation():
 
             safe_response = (
                 result.response[:120] + "..."
-                if len(result.response) > 120 else result.response
+                if len(result.response) > 120
+                else result.response
             )
 
             table.add_row("Prompt", prompt)
@@ -66,13 +67,15 @@ def run_evaluation():
             print(f"[red]ERROR with prompt:[/red] {prompt}")
             print(e)
 
-            raw_results.append({
-                "prompt": prompt,
-                "response": None,
-                "latency": None,
-                "tokens": None,
-                "error": str(e)
-            })
+            raw_results.append(
+                {
+                    "prompt": prompt,
+                    "response": None,
+                    "latency": None,
+                    "tokens": None,
+                    "error": str(e),
+                }
+            )
 
             report_results += evaluator.evaluate_error(prompt=prompt, error=e)
 

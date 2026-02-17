@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
+
 class LLMResult(BaseModel):
     prompt: str
     response: str
     latency: float | None = None
     tokens: int | None = None
-    
+
+
 class Report(BaseModel):
     prompt: str
     response: str

@@ -1,9 +1,10 @@
 import json
+
 from rich import print
 
 from .config import EVAL_KEYWORDS, PASS_THRESHOLD, REPORTS_DIR, REPORTS_NAME
+from .metrics import contains_keywords, count_latency_score, count_length_score
 from .models import Report
-from .metrics import count_latency_score, count_length_score, contains_keywords
 
 
 class Evaluator:
@@ -20,26 +21,25 @@ class Evaluator:
             prompt=response.prompt,
             response=response.response,
             keyword_score=keywords_score,
-            length_score=length_score,       
+            length_score=length_score,
             latency=float(f"{response.latency:.2f}"),
             final_score=final,
-            was_passed=was_passed
+            was_passed=was_passed,
         )
 
         print(f"[green]OK[/green] - latency: {response.latency:.3f}s | score: {final}")
 
-        return [report.model_dump()]   # return list of dicts
-    
+        return [report.model_dump()]  # return list of dicts
 
     def evaluate_error(self, prompt, error):
         report = {
             "prompt": prompt,
             "response": None,
             "keyword_score": 0,
-            "length_score": 0,     
+            "length_score": 0,
             "latency": None,
             "final_score": 0,
-            "error": str(error)
+            "error": str(error),
         }
 
         print(f"[red]ERROR[/red] - {error}")

@@ -1,13 +1,14 @@
 import os
 import time
 from timeit import main
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
 from . import config
 
 
-class LLMClient():
+class LLMClient:
     def __init__(self):
         # 1. Load environment variables from .env file
         load_dotenv()
@@ -19,7 +20,7 @@ class LLMClient():
         # 2. Initialize OpenAI client
         self.client = OpenAI(api_key=api_key)
 
-        self.model=config.MODEL_NAME
+        self.model = config.MODEL_NAME
         self.temperature = config.TEMPERATURE
         self.max_tokens = config.MAX_TOKENS
 
@@ -30,10 +31,10 @@ class LLMClient():
             model=self.model,
             input=[
                 {"role": "system", "content": "You are a precise technical assistant."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ],
             temperature=self.temperature,
-            max_output_tokens=self.max_tokens
+            max_output_tokens=self.max_tokens,
         )
 
         latency = time.perf_counter() - start_time
@@ -45,5 +46,5 @@ class LLMClient():
             "prompt": prompt,
             "response": answer,
             "latency": latency,
-            "tokens": tokens
+            "tokens": tokens,
         }
