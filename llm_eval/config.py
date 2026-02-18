@@ -1,6 +1,7 @@
-from dotenv import load_dotenv
-from datetime import datetime
 import os
+from datetime import datetime
+
+from dotenv import load_dotenv
 
 load_dotenv()
 timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
@@ -21,7 +22,7 @@ RESULTS_NAME = f"results_{timestamp}.json"
 # Keywords you want to evaluate against
 EVAL_KEYWORDS = ["nothing", "nothingness", "void", "emptiness", "null"]
 
-# Latency threshold in seconds (for scoring)   
+# Latency threshold in seconds (for scoring)
 LATENCY_THRESHOLD = 5.0
 
 # Pass threshold for final score (0 to 1)
