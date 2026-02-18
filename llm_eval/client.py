@@ -1,30 +1,25 @@
-import os
 import time
 from timeit import main
-
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from . import config
+from llm_eval import config
 
 
-class LLMClient:
+class LLMClient():
     def __init__(self):
-        # 1. Load environment variables from .env file
-        load_dotenv()
 
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
+        if not config.API_KEY:
             raise ValueError("OPENAI_API_KEY not found in environment")
 
-        # 2. Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(api_key=config.API_KEY)
 
         self.model = config.MODEL_NAME
         self.temperature = config.TEMPERATURE
         self.max_tokens = config.MAX_TOKENS
 
     def send_prompt(self, prompt: str):
+
         start_time = time.perf_counter()
 
         response = self.client.responses.create(
@@ -39,12 +34,28 @@ class LLMClient:
 
         latency = time.perf_counter() - start_time
 
-        answer = response.output_text
-        tokens = response.usage.output_tokens
+        # -------- Extract text safely --------
+        answer = ""
+
+        try:
+            if hasattr(response, "output_text") and response.output_text:
+                answer = response.output_text
+            else:
+                answer = response.output[0].content[0].text
+        except Exception:
+            answer = str(response)
+
+        # -------- Tokens safely --------
+        tokens = None
+        try:
+            if response.usage:
+                tokens = response.usage.output_tokens
+        except Exception:
+            pass
 
         return {
             "prompt": prompt,
             "response": answer,
             "latency": latency,
-            "tokens": tokens,
+            "tokens": tokens
         }

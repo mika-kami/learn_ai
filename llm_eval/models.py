@@ -1,18 +1,28 @@
 from pydantic import BaseModel
+from typing import Optional
+
 
 
 class LLMResult(BaseModel):
     prompt: str
     response: str
-    latency: float | None = None
-    tokens: int | None = None
+    latency: Optional[float] = None
+    tokens: Optional[int] = None
+    model: Optional[str] = None
 
 
 class Report(BaseModel):
     prompt: str
     response: str
-    keyword_score: float
-    length_score: float
-    latency: float | None = None
-    final_score: float | None = None
-    was_passed: bool | None = None
+
+    latency: Optional[float] = None
+    tokens: Optional[int] = None
+
+    keyword_score: float = 0.0
+    length_score: float = 0.0
+    latency_score: float = 0.0
+
+    final_score: Optional[float] = None
+    was_passed: Optional[bool] = None
+
+    error: Optional[str] = None

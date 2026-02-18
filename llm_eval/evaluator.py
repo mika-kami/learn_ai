@@ -1,51 +1,83 @@
 import json
-
+from datetime import datetime
+from pathlib import Path
 from rich import print
+from llm_eval.models import Report
+from llm_eval import config
 
-from .config import EVAL_KEYWORDS, PASS_THRESHOLD, REPORTS_DIR, REPORTS_NAME
-from .metrics import contains_keywords, count_latency_score, count_length_score
-from .models import Report
 
 
 class Evaluator:
 
-    def generate_report(self, response):
-        # ---- METRICS ----
-        keywords_score = contains_keywords(response.response, EVAL_KEYWORDS)
-        length_score = count_length_score(response.tokens)
-        latency_score = count_latency_score(response.latency)
-        final = round((keywords_score + length_score + latency_score) / 3, 3)
-        was_passed: bool = final >= PASS_THRESHOLD
+    def __init__(self, metrics, weights):
+
+        self.metrics = metrics
+        self.weights = weights
+
+    # =========================
+    # MAIN EVALUATION
+    # =========================
+
+    def evaluate(self, response):
+
+        results = {}
+
+        total_score = 0
+        total_weight = 0
+
+        for metric in self.metrics:
+
+            metric_name = metric.name()
+
+            score = metric.compute(
+                response.response,
+                tokens=response.tokens,
+                latency=response.latency
+            )
+
+            results[metric_name] = score
+
+            weight = self.weights.get(metric_name, 1.0)
+
+            total_score += score * weight
+            total_weight += weight
+
+        if total_weight > 0:
+            final_score = total_score / total_weight
+        else:
+            final_score = 0.0
+
+        was_passed = final_score >= config.PASS_THRESHOLD
 
         report = Report(
             prompt=response.prompt,
             response=response.response,
-            keyword_score=keywords_score,
-            length_score=length_score,
-            latency=float(f"{response.latency:.2f}"),
-            final_score=final,
-            was_passed=was_passed,
+            latency=response.latency,
+            tokens=response.tokens,
+            keyword_score=results.get("keyword_score", 0),
+            length_score=results.get("length_score", 0),
+            latency_score=results.get("latency_score", 0),
+            final_score=final_score,
+            was_passed=was_passed
         )
 
-        print(f"[green]OK[/green] - latency: {response.latency:.3f}s | score: {final}")
+        return [report.model_dump()]
 
-        return [report.model_dump()]  # return list of dicts
+    # =========================
+    # ERROR HANDLING
+    # =========================
 
     def evaluate_error(self, prompt, error):
-        report = {
-            "prompt": prompt,
-            "response": None,
-            "keyword_score": 0,
-            "length_score": 0,
-            "latency": None,
-            "final_score": 0,
-            "error": str(error),
-        }
 
-        print(f"[red]ERROR[/red] - {error}")
-        return [report]
+        report = Report(
+            prompt=prompt,
+            response="",
+            error=str(error),
+            keyword_score=0,
+            length_score=0,
+            latency_score=0,
+            final_score=0,
+            was_passed=False
+        )
 
-    def save_report(self, reports):
-        """Writes a list of reports to JSON."""
-        with open(f"{REPORTS_DIR}/{REPORTS_NAME}", "w", encoding="utf-8") as f:
-            json.dump(reports, f, indent=2, ensure_ascii=False)
+        return [report.model_dump()]
