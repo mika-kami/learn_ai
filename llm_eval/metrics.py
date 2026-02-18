@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from llm_eval import config
 
 
@@ -16,6 +17,7 @@ class BaseMetric(ABC):
 # =========================
 # LENGTH METRIC
 # =========================
+
 
 class LengthMetric(BaseMetric):
 
@@ -35,13 +37,15 @@ class LengthMetric(BaseMetric):
             return 0.0
 
         score = tokens / max_len
+        result = min(score, 1.0)
 
-        return min(score, 1.0)
+        return round(result, 3)
 
 
 # =========================
 # LATENCY METRIC
 # =========================
+
 
 class LatencyMetric(BaseMetric):
 
@@ -61,13 +65,15 @@ class LatencyMetric(BaseMetric):
             return 0.0
 
         score = 1 - (latency / max_latency)
+        result = max(score, 0.0)
 
-        return max(score, 0.0)
+        return round(result, 3)
 
 
 # =========================
 # KEYWORD METRIC
 # =========================
+
 
 class KeywordMetric(BaseMetric):
 
@@ -91,9 +97,7 @@ class KeywordMetric(BaseMetric):
 
         text_lower = response_text.lower()
 
-        count = sum(
-            1 for kw in self.keywords
-            if kw.lower() in text_lower
-        )
+        count = sum(1 for kw in self.keywords if kw.lower() in text_lower)
+        result = count / len(self.keywords)
 
-        return count / len(self.keywords)
+        return round(result, 3)

@@ -1,36 +1,25 @@
 import json
 from datetime import datetime
-
 from pathlib import Path
+
 from rich import print
 from rich.console import Console
 from rich.table import Table
 
-from llm_eval.metrics import LatencyMetric, LengthMetric, KeywordMetric
-from llm_eval.config import (
-    EVAL_KEYWORDS
-)
 from llm_eval.client import LLMClient
+from llm_eval.config import EVAL_KEYWORDS
 from llm_eval.evaluator import Evaluator
+from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric
 from llm_eval.models import LLMResult
 from llm_eval.reporter import Reporter
-
 
 # =========================
 # METRICS CONFIG
 # =========================
 
-metrics = [
-    LatencyMetric(),
-    LengthMetric(),
-    KeywordMetric(EVAL_KEYWORDS)
-]
+metrics = [LatencyMetric(), LengthMetric(), KeywordMetric(EVAL_KEYWORDS)]
 
-weights = {
-    "latency_score": 0.4,
-    "length_score": 0.3,
-    "keyword_score": 0.3
-}
+weights = {"latency_score": 0.4, "length_score": 0.3, "keyword_score": 0.3}
 
 evaluator = Evaluator(metrics, weights)
 
@@ -44,6 +33,7 @@ reporter = Reporter()
 # LOAD PROMPTS
 # =========================
 
+
 def load_prompts(path="./data/prompts.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -52,6 +42,7 @@ def load_prompts(path="./data/prompts.json"):
 # =========================
 # MAIN RUN
 # =========================
+
 
 def run_evaluation():
 
@@ -88,9 +79,7 @@ def run_evaluation():
 
             # -------- EVALUATION --------
 
-            report_results.extend(
-                evaluator.evaluate(result)
-            )
+            report_results.extend(evaluator.evaluate(result))
 
             # -------- TABLE OUTPUT --------
 
@@ -103,12 +92,15 @@ def run_evaluation():
 
             safe_response = (
                 response_text[:120] + "..."
-                if len(response_text) > 120 else response_text
+                if len(response_text) > 120
+                else response_text
             )
 
             table.add_row("Prompt", prompt)
             table.add_row("Response (trimmed)", safe_response)
-            table.add_row("Latency", f"{result.latency:.2f} sec" if result.latency else "N/A")
+            table.add_row(
+                "Latency", f"{result.latency:.2f} sec" if result.latency else "N/A"
+            )
             table.add_row("Tokens", str(result.tokens))
 
             console.print(table)
@@ -128,14 +120,12 @@ def run_evaluation():
                 }
             )
 
-            report_results.extend(
-                evaluator.evaluate_error(prompt=prompt, error=e)
-            )
+            report_results.extend(evaluator.evaluate_error(prompt=prompt, error=e))
 
     # =========================
     # SAVE RAW
     # =========================
-    timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M")
+    timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M-%S")
 
     results_path = results_dir / f"results_{timestamp}.json"
 

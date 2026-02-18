@@ -1,12 +1,12 @@
 import time
-from timeit import main
-from dotenv import load_dotenv
+
 from openai import OpenAI
 
 from llm_eval import config
 
 
-class LLMClient():
+class LLMClient:
+
     def __init__(self):
 
         if not config.API_KEY:
@@ -57,5 +57,6 @@ class LLMClient():
             "prompt": prompt,
             "response": answer,
             "latency": latency,
-            "tokens": tokens
+            "tokens": tokens,
+            "model": self.model,
         }

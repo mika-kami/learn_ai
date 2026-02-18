@@ -1,10 +1,5 @@
-import json
-from datetime import datetime
-from pathlib import Path
-from rich import print
-from llm_eval.models import Report
 from llm_eval import config
-
+from llm_eval.models import Report
 
 
 class Evaluator:
@@ -30,9 +25,7 @@ class Evaluator:
             metric_name = metric.name()
 
             score = metric.compute(
-                response.response,
-                tokens=response.tokens,
-                latency=response.latency
+                response.response, tokens=response.tokens, latency=response.latency
             )
 
             results[metric_name] = score
@@ -52,13 +45,13 @@ class Evaluator:
         report = Report(
             prompt=response.prompt,
             response=response.response,
-            latency=response.latency,
+            latency=round(response.latency, 3),
             tokens=response.tokens,
             keyword_score=results.get("keyword_score", 0),
             length_score=results.get("length_score", 0),
             latency_score=results.get("latency_score", 0),
-            final_score=final_score,
-            was_passed=was_passed
+            final_score=round(final_score, 3),
+            was_passed=was_passed,
         )
 
         return [report.model_dump()]
@@ -77,7 +70,7 @@ class Evaluator:
             length_score=0,
             latency_score=0,
             final_score=0,
-            was_passed=False
+            was_passed=False,
         )
 
         return [report.model_dump()]

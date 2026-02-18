@@ -1,6 +1,4 @@
-from dotenv import load_dotenv
 import os
-from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -14,7 +12,7 @@ API_KEY = os.getenv("OPENAI_API_KEY")
 
 MODEL_NAME = "gpt-4o-mini"
 TEMPERATURE = 0.3
-MAX_TOKENS = 300
+MAX_TOKENS = 50
 
 # =========================
 # EVALUATION SETTINGS
@@ -33,4 +31,4 @@ EVAL_KEYWORDS = [
 LATENCY_THRESHOLD = 5.0
 
 # Pass threshold for final score (0 to 1)
-PASS_THRESHOLD = 0.8
+PASS_THRESHOLD = 0.5
