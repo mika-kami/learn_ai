@@ -21,7 +21,7 @@ class Report(BaseModel):
     keyword_score: float = 0.0
     length_score: float = 0.0
     latency_score: float = 0.0
-    embedding_semantic_score: float = 0.0
+    semantic_similarity_score: float = 0.0
 
     final_score: Optional[float] = None
     was_passed: Optional[bool] = None

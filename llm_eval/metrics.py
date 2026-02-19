@@ -109,14 +109,14 @@ class KeywordMetric(BaseMetric):
 # =========================
 
 
-class EmbeddingSimilarityMetric(BaseMetric):
+class SemanticSimilarityMetric(BaseMetric):
 
     def __init__(self):
 
         self.embedding_client = EmbeddingClient()
 
     def name(self) -> str:
-        return "embedding_semantic_score"
+        return "semantic_similarity_score"
 
     def compute(self, response_text: str, **kwargs) -> float:
 

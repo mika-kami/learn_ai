@@ -27,4 +27,4 @@ class Reporter:
         with open(path, "w", encoding="utf-8") as f:
             json.dump(reports, f, indent=2, ensure_ascii=False)
 
-        print(f"[bold green]Saved evaluation to {path}[/bold green]")
+        print(f"[bold green]Saved report to {path}[/bold green]")

@@ -1,6 +1,6 @@
 [
   {
-    "prompt": "What is nothing?",
-    "expected": "Nothing refers to the absence of anything or emptiness."
+    "prompt": "Explain embeddings simply.",
+    "expected": "Embeddings are a way to represent items, like words or images, as numerical vectors in a continuous space. This allows similar items to be closer together in that space, making it easier for algorithms to understand relationships and patterns."
   }
 ]

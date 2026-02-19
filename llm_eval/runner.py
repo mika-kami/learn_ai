@@ -9,19 +9,31 @@ from rich.table import Table
 from llm_eval.client import LLMClient
 from llm_eval.config import EVAL_KEYWORDS
 from llm_eval.evaluator import Evaluator
-from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric
+from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric, SemanticSimilarityMetric
 from llm_eval.models import LLMResult
 from llm_eval.reporter import Reporter
+
 
 # =========================
 # METRICS CONFIG
 # =========================
 
-metrics = [LatencyMetric(), LengthMetric(), KeywordMetric(EVAL_KEYWORDS)]
+metrics = [
+    SemanticSimilarityMetric(),
+    LatencyMetric(),
+    LengthMetric(),
+    KeywordMetric(EVAL_KEYWORDS),
+]
 
-weights = {"latency_score": 0.4, "length_score": 0.3, "keyword_score": 0.3}
+weights = {
+    "semantic_score": 0.6,
+    "latency_score": 0.2,
+    "length_score": 0.1,
+    "keyword_score": 0.1,
+}
 
 evaluator = Evaluator(metrics, weights)
+
 
 # =========================
 # REPORTER CONFIG
@@ -29,20 +41,27 @@ evaluator = Evaluator(metrics, weights)
 
 reporter = Reporter()
 
-# =========================
-# LOAD PROMPTS
-# =========================
 
+# =========================
+# LOAD DATA
+# =========================
 
 def load_prompts(path="./data/prompts.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
+def load_expected(path="./data/expected.json"):
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Map prompt -> expected
+    return {item["prompt"]: item["expected"] for item in data}
+
+
 # =========================
 # MAIN RUN
 # =========================
-
 
 def run_evaluation():
 
@@ -50,6 +69,7 @@ def run_evaluation():
     results_dir.mkdir(parents=True, exist_ok=True)
 
     prompts = load_prompts()
+    expected_map = load_expected()
 
     print(f"[bold cyan]Loaded {len(prompts)} prompts.[/bold cyan]")
 
@@ -77,9 +97,18 @@ def run_evaluation():
 
             raw_results.append(raw_dump)
 
+            # -------- EXPECTED TEXT --------
+
+            expected_text = expected_map.get(prompt)
+
             # -------- EVALUATION --------
 
-            report_results.extend(evaluator.evaluate(result))
+            report_results.extend(
+                evaluator.evaluate(
+                    result,
+                    expected=expected_text
+                )
+            )
 
             # -------- TABLE OUTPUT --------
 
@@ -120,11 +149,14 @@ def run_evaluation():
                 }
             )
 
-            report_results.extend(evaluator.evaluate_error(prompt=prompt, error=e))
+            report_results.extend(
+                evaluator.evaluate_error(prompt=prompt, error=e)
+            )
 
     # =========================
     # SAVE RAW
     # =========================
+
     timestamp = datetime.now().strftime("%d.%m.%Y_%H-%M-%S")
 
     results_path = results_dir / f"results_{timestamp}.json"
@@ -136,10 +168,12 @@ def run_evaluation():
     # SAVE REPORT
     # =========================
 
-    reporter.save_report(report_results)
+    report_path = reporter.save_report(report_results)
 
     print(f"\n[bold green]Saved results to {results_path}[/bold green]")
 
 
 if __name__ == "__main__":
     run_evaluation()
+
+

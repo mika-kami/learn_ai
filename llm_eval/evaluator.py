@@ -13,7 +13,7 @@ class Evaluator:
     # MAIN EVALUATION
     # =========================
 
-    def evaluate(self, response):
+    def evaluate(self, response, expected=None):
 
         results = {}
 
@@ -25,7 +25,7 @@ class Evaluator:
             metric_name = metric.name()
 
             score = metric.compute(
-                response.response, tokens=response.tokens, latency=response.latency
+                response.response, tokens=response.tokens, latency=response.latency, expected=expected
             )
 
             results[metric_name] = score
@@ -50,7 +50,7 @@ class Evaluator:
             keyword_score=results.get("keyword_score", 0),
             length_score=results.get("length_score", 0),
             latency_score=results.get("latency_score", 0),
-            embedding_semantic_score=results.get("embedding_semantic_score", 0),
+            semantic_similarity_score=results.get("semantic_similarity_score", 0),
             final_score=round(final_score, 3),
             was_passed=was_passed,
         )
@@ -70,6 +70,7 @@ class Evaluator:
             keyword_score=0,
             length_score=0,
             latency_score=0,
+            semantic_similarity_score=0,
             final_score=0,
             was_passed=False,
         )
