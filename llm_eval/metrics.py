@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from llm_eval import config
+from llm_eval.embeddings import EmbeddingClient, cosine_similarity
 
 
 class BaseMetric(ABC):
@@ -101,3 +102,33 @@ class KeywordMetric(BaseMetric):
         result = count / len(self.keywords)
 
         return round(result, 3)
+
+
+# =========================
+# EMBEDDINGS METRIC
+# =========================
+
+
+class EmbeddingSimilarityMetric(BaseMetric):
+
+    def __init__(self):
+
+        self.embedding_client = EmbeddingClient()
+
+    def name(self) -> str:
+        return "embedding_semantic_score"
+
+    def compute(self, response_text: str, **kwargs) -> float:
+
+        expected = kwargs.get("expected")
+
+        if not response_text or not expected:
+            return 0.0
+
+        emb1 = self.embedding_client.get_embedding(response_text)
+        emb2 = self.embedding_client.get_embedding(expected)
+
+        similarity = cosine_similarity(emb1, emb2)
+
+        return max(0.0, similarity)
+    

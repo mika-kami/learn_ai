@@ -9,10 +9,10 @@ class LLMClient:
 
     def __init__(self):
 
-        if not config.API_KEY:
+        if not config.OPENAI_API_KEY:
             raise ValueError("OPENAI_API_KEY not found in environment")
 
-        self.client = OpenAI(api_key=config.API_KEY)
+        self.client = OpenAI(api_key=config.OPENAI_API_KEY)
 
         self.model = config.MODEL_NAME
         self.temperature = config.TEMPERATURE

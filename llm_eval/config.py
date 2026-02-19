@@ -8,9 +8,10 @@ load_dotenv()
 # API / MODEL
 # =========================
 
-API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 MODEL_NAME = "gpt-4o-mini"
+EMBEDDING_MODEL_NAME = "text-embedding-3-small"
 TEMPERATURE = 0.3
 MAX_TOKENS = 50
 

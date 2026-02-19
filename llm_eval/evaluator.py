@@ -50,6 +50,7 @@ class Evaluator:
             keyword_score=results.get("keyword_score", 0),
             length_score=results.get("length_score", 0),
             latency_score=results.get("latency_score", 0),
+            embedding_semantic_score=results.get("embedding_semantic_score", 0),
             final_score=round(final_score, 3),
             was_passed=was_passed,
         )
