@@ -1,5 +1,6 @@
-from openai import OpenAI
 import math
+
+from openai import OpenAI
 
 from llm_eval import config
 
@@ -13,10 +14,7 @@ class EmbeddingClient:
 
     def get_embedding(self, text: str):
 
-        response = self.client.embeddings.create(
-            model=self.model,
-            input=text
-        )
+        response = self.client.embeddings.create(model=self.model, input=text)
 
         return response.data[0].embedding
 
@@ -24,6 +22,7 @@ class EmbeddingClient:
 # =========================
 # COSINE SIMILARITY
 # =========================
+
 
 def cosine_similarity(vec1, vec2):
 

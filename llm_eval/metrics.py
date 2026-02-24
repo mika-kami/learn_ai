@@ -1,3 +1,4 @@
+import statistics
 from abc import ABC, abstractmethod
 
 from llm_eval import config
@@ -131,11 +132,12 @@ class SemanticSimilarityMetric(BaseMetric):
         similarity = cosine_similarity(emb1, emb2)
 
         return max(0.0, similarity)
-    
+
 
 # =========================
 # STABILITY METRIC
 # =========================
+
 
 class StabilityMetric(BaseMetric):
     def __init__(self):
@@ -145,27 +147,20 @@ class StabilityMetric(BaseMetric):
     def name(self) -> str:
         return "stability_score"
 
-    def compute(self, responses, **kwargs):
+    def compute(self, response_text: str, **kwargs):
+
+        responses = kwargs.get("responses")
 
         if len(responses) < 2:
             return 1.0
 
-        embeddings = [
-            self.embedding_client.get_embedding(r)
-            for r in responses
-            if r
-        ]
+        embeddings = [self.embedding_client.get_embedding(r) for r in responses if r]
 
         sims = []
 
         for i in range(len(embeddings)):
             for j in range(i + 1, len(embeddings)):
-                sims.append(
-                    cosine_similarity(
-                        embeddings[i],
-                        embeddings[j]
-                    )
-                )
+                sims.append(cosine_similarity(embeddings[i], embeddings[j]))
 
         if not sims:
             return 0.0

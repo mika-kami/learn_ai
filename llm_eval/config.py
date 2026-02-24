@@ -19,7 +19,7 @@ MAX_TOKENS = 50
 # EVALUATION SETTINGS
 # =========================
 
-NUM_RUNS_PER_PROMPT = 3
+NUM_RUNS_PER_PROMPT = 2
 
 # Keywords you want to evaluate against
 EVAL_KEYWORDS = [

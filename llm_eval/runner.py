@@ -9,10 +9,15 @@ from rich.table import Table
 from llm_eval.client import LLMClient
 from llm_eval.config import EVAL_KEYWORDS, NUM_RUNS_PER_PROMPT
 from llm_eval.evaluator import Evaluator
-from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric, SemanticSimilarityMetric, StabilityMetric
+from llm_eval.metrics import (
+    KeywordMetric,
+    LatencyMetric,
+    LengthMetric,
+    SemanticSimilarityMetric,
+    StabilityMetric,
+)
 from llm_eval.models import LLMResult
 from llm_eval.reporter import Reporter
-
 
 # =========================
 # METRICS CONFIG
@@ -27,9 +32,9 @@ metrics = [
 ]
 
 weights = {
-    "semantic_score": 0.6,
-    "stability_score": 0.2,
-    "latency_score": 0.2,
+    "semantic_similarity_score": 0.5,
+    "stability_score": 0.15,
+    "latency_score": 0.15,
     "length_score": 0.1,
     "keyword_score": 0.1,
 }
@@ -48,6 +53,7 @@ reporter = Reporter()
 # LOAD DATA
 # =========================
 
+
 def load_prompts(path="./data/prompts.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -64,6 +70,7 @@ def load_expected(path="./data/expected.json"):
 # =========================
 # MAIN RUN
 # =========================
+
 
 def run_evaluation():
 
@@ -89,12 +96,13 @@ def run_evaluation():
 
             runs = []
 
-            responses_text = [r.response for r in runs]
-
             for _ in range(NUM_RUNS_PER_PROMPT):
                 raw = client.send_prompt(prompt)
                 runs.append(LLMResult(**raw))
                 result = LLMResult(**raw)
+
+            main_result = runs[0]
+            responses_text = [r.response for r in runs]
 
             # -------- RAW SAVE --------
 
@@ -113,10 +121,7 @@ def run_evaluation():
 
             report_results.extend(
                 evaluator.evaluate(
-                    #result,
-                    runs[0],
-                    expected=expected_text,
-                    response=responses_text
+                    main_result, expected=expected_text, responses=responses_text
                 )
             )
 
@@ -159,9 +164,7 @@ def run_evaluation():
                 }
             )
 
-            report_results.extend(
-                evaluator.evaluate_error(prompt=prompt, error=e)
-            )
+            report_results.extend(evaluator.evaluate_error(prompt=prompt, error=e))
 
     # =========================
     # SAVE RAW
@@ -185,5 +188,3 @@ def run_evaluation():
 
 if __name__ == "__main__":
     run_evaluation()
-
-

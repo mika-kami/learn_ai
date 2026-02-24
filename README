@@ -3,7 +3,8 @@ Added metrics and evaluation model.
 Metrics:
 - length_score (tokens): Evaluates the length of the response, giving a score based on how well it meets expected length criteria.
 - latency_score (secs): Evaluates the response latency, giving a score based on how quickly the response was generated.
-- semantic_score (0 to 1): Evaluates the semantic similarity between the response and the expected answer, giving a score based on how closely they match in meaning.
+- semantic_similarity_score (0 to 1): Evaluates the semantic similarity between the response and the expected answer, giving a score based on how closely they match in meaning.
+- stability_score (0 to 1): Evaluates stability of responses during several runs. 
 - keyword_score (0 to 1): Evaluates the presence of key terms from the expected set of keywords in the response, giving a score based on how many key terms are included.
 - final_score (0 to 1): A composite score that combines semantic_score, keyword_score, length_score, and latency_score to provide an overall evaluation of the response quality.
 
