@@ -132,3 +132,42 @@ class SemanticSimilarityMetric(BaseMetric):
 
         return max(0.0, similarity)
     
+
+# =========================
+# STABILITY METRIC
+# =========================
+
+class StabilityMetric(BaseMetric):
+    def __init__(self):
+
+        self.embedding_client = EmbeddingClient()
+
+    def name(self) -> str:
+        return "stability_score"
+
+    def compute(self, responses, **kwargs):
+
+        if len(responses) < 2:
+            return 1.0
+
+        embeddings = [
+            self.embedding_client.get_embedding(r)
+            for r in responses
+            if r
+        ]
+
+        sims = []
+
+        for i in range(len(embeddings)):
+            for j in range(i + 1, len(embeddings)):
+                sims.append(
+                    cosine_similarity(
+                        embeddings[i],
+                        embeddings[j]
+                    )
+                )
+
+        if not sims:
+            return 0.0
+
+        return sum(sims) / len(sims)

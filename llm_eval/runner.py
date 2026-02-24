@@ -7,9 +7,9 @@ from rich.console import Console
 from rich.table import Table
 
 from llm_eval.client import LLMClient
-from llm_eval.config import EVAL_KEYWORDS
+from llm_eval.config import EVAL_KEYWORDS, NUM_RUNS_PER_PROMPT
 from llm_eval.evaluator import Evaluator
-from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric, SemanticSimilarityMetric
+from llm_eval.metrics import KeywordMetric, LatencyMetric, LengthMetric, SemanticSimilarityMetric, StabilityMetric
 from llm_eval.models import LLMResult
 from llm_eval.reporter import Reporter
 
@@ -20,6 +20,7 @@ from llm_eval.reporter import Reporter
 
 metrics = [
     SemanticSimilarityMetric(),
+    StabilityMetric(),
     LatencyMetric(),
     LengthMetric(),
     KeywordMetric(EVAL_KEYWORDS),
@@ -27,6 +28,7 @@ metrics = [
 
 weights = {
     "semantic_score": 0.6,
+    "stability_score": 0.2,
     "latency_score": 0.2,
     "length_score": 0.1,
     "keyword_score": 0.1,
@@ -85,8 +87,14 @@ def run_evaluation():
 
         try:
 
-            raw = client.send_prompt(prompt)
-            result = LLMResult(**raw)
+            runs = []
+
+            responses_text = [r.response for r in runs]
+
+            for _ in range(NUM_RUNS_PER_PROMPT):
+                raw = client.send_prompt(prompt)
+                runs.append(LLMResult(**raw))
+                result = LLMResult(**raw)
 
             # -------- RAW SAVE --------
 
@@ -95,7 +103,7 @@ def run_evaluation():
             if raw_dump.get("latency") is not None:
                 raw_dump["latency"] = float(f"{raw_dump['latency']:.2f}")
 
-            raw_results.append(raw_dump)
+            raw_results.append([r.model_dump() for r in runs])
 
             # -------- EXPECTED TEXT --------
 
@@ -105,8 +113,10 @@ def run_evaluation():
 
             report_results.extend(
                 evaluator.evaluate(
-                    result,
-                    expected=expected_text
+                    #result,
+                    runs[0],
+                    expected=expected_text,
+                    response=responses_text
                 )
             )
 

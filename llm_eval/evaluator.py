@@ -13,7 +13,7 @@ class Evaluator:
     # MAIN EVALUATION
     # =========================
 
-    def evaluate(self, response, expected=None):
+    def evaluate(self, response, expected=None, responses=list[str]):
 
         results = {}
 
@@ -25,7 +25,7 @@ class Evaluator:
             metric_name = metric.name()
 
             score = metric.compute(
-                response.response, tokens=response.tokens, latency=response.latency, expected=expected
+                response.response, tokens=response.tokens, latency=response.latency, expected=expected, responses=responses
             )
 
             results[metric_name] = score
@@ -47,6 +47,8 @@ class Evaluator:
             response=response.response,
             latency=round(response.latency, 3),
             tokens=response.tokens,
+            responses=responses,
+            stability_score=results.get("stability_score", 0),
             keyword_score=results.get("keyword_score", 0),
             length_score=results.get("length_score", 0),
             latency_score=results.get("latency_score", 0),
