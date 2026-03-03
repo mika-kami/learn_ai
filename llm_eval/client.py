@@ -14,16 +14,15 @@ class LLMClient:
 
         self.client = OpenAI(api_key=config.OPENAI_API_KEY)
 
-        self.model = config.MODEL_NAME
         self.temperature = config.TEMPERATURE
         self.max_tokens = config.MAX_TOKENS
 
-    def send_prompt(self, prompt: str):
+    def send_prompt(self, prompt: str, model_name: str):
 
         start_time = time.perf_counter()
 
         response = self.client.responses.create(
-            model=self.model,
+            model=model_name,
             input=[
                 {"role": "system", "content": "You are a precise technical assistant."},
                 {"role": "user", "content": prompt},
@@ -58,5 +57,5 @@ class LLMClient:
             "response": answer,
             "latency": latency,
             "tokens": tokens,
-            "model": self.model,
+            "model": model_name,
         }

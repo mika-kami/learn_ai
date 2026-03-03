@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from llm_eval.client import LLMClient
-from llm_eval.config import EVAL_KEYWORDS, NUM_RUNS_PER_PROMPT
+from llm_eval.config import EVAL_KEYWORDS, MODELS, NUM_RUNS_PER_PROMPT
 from llm_eval.evaluator import Evaluator
 from llm_eval.metrics import (
     KeywordMetric,
@@ -97,9 +97,10 @@ def run_evaluation():
             runs = []
 
             for _ in range(NUM_RUNS_PER_PROMPT):
-                raw = client.send_prompt(prompt)
-                runs.append(LLMResult(**raw))
-                result = LLMResult(**raw)
+                for model in MODELS.values():
+                    raw = client.send_prompt(prompt, model)
+                    runs.append(LLMResult(**raw))
+                    result = LLMResult(**raw)
 
             main_result = runs[0]
             responses_text = [r.response for r in runs]
